@@ -1,29 +1,29 @@
-var http = require('http');
-var url = require('url');
-var topic = require ('./lib/topic');
+var express = require('express');
+var app = express();
+var topic = require ('./lib/topic')
+var bodyParser = require ('body-parser')
 
-var app = http.createServer(function(request,response){
-    var _url = request.url;    
-    var path_name = url.parse(_url, true).pathname;   
-      if(path_name == '/'){         
-        if(_url == '/'){
-          topic.Home(request, response);               
-        }else {                       
-          topic.query(request, response);
-        }
-      }else if (path_name =='/create'){      
-          topic.create(request, response);       
-      }else if (path_name =='/create_process'){ //TODO: 띄어쓰기 적용시키기. 
-          topic.create_process(request, response);         
-      }else if (path_name =='/update'){
-          topic.update(request, response);
-      }else if (path_name =='/update_process'){           
-          topic.update_process(request, response);
-      }else if (path_name == '/delete_process'){         
-          topic.delete_process(request, response);
-      }else{            
-          response.writeHead(404);
-          response.end('Not found');    
-      }            
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.get('/', function(request, response){
+  topic.Home(request, response);   
 });
+app.get('/page/:pageId', function(request, response){
+  topic.Page(request, response);
+});
+app.get('/create', function(request, response){
+  topic.create(request, response);
+});
+app.post('/create_process', function(request, response){
+  topic.create_process(request, response);
+});
+app.get('/update/:pageId', function(request, response){
+  topic.update(request, response);
+});
+app.post('/update_process', function(request, response){
+  topic.update_process(request, response);
+})
+app.post('/delete_process', function(request, response){
+  topic.delete_process(request, response);
+})
 app.listen(3000);
